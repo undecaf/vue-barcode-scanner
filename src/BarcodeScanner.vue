@@ -420,15 +420,18 @@ export default {
 
                 this.detect()
                     .then(barcodes => {
-                        const
-                            duration = performance.now() - startedAt,
-                            delay = (
-                                this.parsedRate.scanInterval ||
-                                duration / this.parsedRate.loadFactor ||
-                                DEFAULT_SCAN_INTERVAL
-                            ) - duration
+                        // Continue only if scanning has not been stopped while detection was in progress
+                        if (this.mode) {
+                            const
+                                duration = performance.now() - startedAt,
+                                delay = (
+                                    this.parsedRate.scanInterval ||
+                                    duration / this.parsedRate.loadFactor ||
+                                    DEFAULT_SCAN_INTERVAL
+                                ) - duration
 
-                        this.mode = setTimeout(() => this.start(), Math.max(delay, 1))
+                            this.mode = setTimeout(() => this.start(), Math.max(delay, 1))
+                        }
                     })
                     .catch(error => {
                         this.handleError(error)

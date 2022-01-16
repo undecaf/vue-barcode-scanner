@@ -1,6 +1,6 @@
 {
   "name": "@undecaf/vue-barcode-scanner",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "A barcode/QR code scanner for Vue 2",
   "keywords": [
     "vue",
