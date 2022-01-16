@@ -57,7 +57,7 @@
             <td><pre :title="b.rawValue">{{ b.rawValue }}</pre></td>
             <td>
               <code>{{ b.format }}</code>
-              <img :src="arrows[b.orientation]">
+              <img class="info" :src="arrows[b.orientation]" :title="orientations[b.orientation]">
             </td>
             <td>{{ Math.round(b.quality).toLocaleString() }}</td>
           </tr>
@@ -72,7 +72,14 @@
 
     <div class="row">
       <div class="six columns">
-        <label for="source">Source</label>
+        <label for="source">
+          Source
+          <img
+            class="info"
+            :src="infoIcon"
+            title="Configures the source element and the 'source' attribute"
+          >
+        </label>
         <div id="source-container">
           <select
             v-model="sourceOption"
@@ -81,19 +88,41 @@
           >
             <option :value="null">No source</option>
 
-            <optgroup label="Cameras (MediaStream sources)">
+            <optgroup
+              label="Cameras (MediaStream sources)"
+              title="Uses a camera MediaStream as source"
+            >
               <option :value="backCamera">Back camera</option>
               <option :value="frontCamera">Front camera</option>
             </optgroup>
 
-            <optgroup label="Media">
-              <option :value="selectFile">Image/video file... (File source)</option>
+            <optgroup
+              label="Media"
+              title="Uses local and remote resources as source"
+            >
+              <option
+                :value="selectFile"
+                title="Loads a local image/video into a File source"
+              >
+                Image/video file... (File source)
+              </option>
+              <!-- The most recently uploaded file -->
               <option v-if="file" :value="file">&nbsp;&nbsp;&nbsp;&nbsp;{{ file.name }} ({{ file.type }})</option>
-              <option :value="enterUrl">Image/video URL... (&lt;img&gt;/&lt;video&gt; source)</option>
+
+              <option
+                :value="enterUrl"
+                title="Loads a remote resource into an &lt;img&gt;/&lt;video&gt; element and uses it as source"
+              >
+                Image/video URL... (&lt;img&gt;/&lt;video&gt; source)
+              </option>
+              <!-- The most recent URL -->
               <option v-if="mediaResponse" :value="mediaResponse">&nbsp;&nbsp;&nbsp;&nbsp;{{ mediaResponse.url }}</option>
             </optgroup>
 
-            <optgroup label="Sample images (File sources)">
+            <optgroup
+              label="Sample images (File sources)"
+              title="Loads a remote image resource into a File source"
+            >
               <option value="codabar">Codabar</option>
               <option value="code_39">Code-39</option>
               <option value="code_39x4">Code-39, all orientations</option>
@@ -115,6 +144,7 @@
             </optgroup>
           </select>
 
+          <!-- Not displayed -->
           <input
             type="file"
             ref="fileInput"
@@ -122,6 +152,7 @@
             @change="openFile"
           >
 
+          <!-- Only displayed while entering an URL -->
           <input
             type="url"
             ref="mediaUrl"
@@ -129,7 +160,7 @@
             v-show="enteringUrl"
             v-model="mediaUrl"
             required
-            placeholder="Enter media URL"
+            placeholder="Enter a media URL then click outside"
             @focus="$event.target.select()"
             @change="openUrl"
             @blur="openUrl"
@@ -143,28 +174,49 @@
             :disabled="!nativeBarcodeDetector"
             @change="selectBarcodeDetector"
           >
-          <span class="label-body" title="Use a polyfill even if a native BarcodeDetector is available">
+          <span class="label-body">
             <a href="https://www.npmjs.com/package/@undecaf/barcode-detector-polyfill" target="_blank">
               <code>BarcodeDetectorPolyfill</code>
             </a>
+            <img
+              class="info"
+              :src="infoIcon"
+              title="Uses this polyfill even if a native BarcodeDetector is available; if disabled then no native BarcodeDetector was found"
+            >
           </span>
         </label>
 
         <label>
           <input type="checkbox" v-model="debug">
-          <span class="label-body">Log debug messages</span>
+          <span class="label-body">Log events and debug messages</span>
+          <img
+            class="info"
+            :src="infoIcon"
+            title="Controls the 'debug' attribute; messages are easier to follow with reduced scanning frequency"
+          >
         </label>
 
         <label>
-          <span title="The value of the 'scanning' attribute">Scanning</span>
+          <span>Scanning</span>
           <input type="radio" v-model="scanning" :value="true"><span>on</span>
           <input type="radio" v-model="scanning" :value="false"><span>off</span>
+          <img
+            class="info"
+            :src="infoIcon"
+            title="Indicates the value of the 'scanning' attribute and can override it"
+          >
         </label>
 
         <label for="rate">
-          <input type="radio" v-model="rateSuffix" value="/s"><span title="Target scanning frequency">Scans/s</span>
-          <input type="radio" v-model="rateSuffix" value="%"><span title="Percentage of time to use for barcode detection">processing load %</span>
-          <span v-show="isScanning" title="Actual scanning frequency">(actual: {{ scansPerSecFormat.format(scansPerSec) }}/s)</span>
+          <input type="radio" v-model="rateSuffix" value="/s">
+          <span title="Target scanning frequency for 'rate' attribute">
+            Scans/s
+          </span>
+          <input type="radio" v-model="rateSuffix" value="%">
+          <span title="% of processing time to use for barcode detection, sets the 'rate' attribute">processing load %</span>
+          <span v-show="isScanning" title="Actual scanning frequency, may be limited by processing speed">
+            (actual: {{ scansPerSecFormat.format(scansPerSec) }}/s)
+          </span>
         </label>
         <input
           class="u-full-width"
@@ -177,7 +229,14 @@
           v-model.number="rateValue"
         >
 
-        <label for="mask-css">Scan area mask examples</label>
+        <label for="mask-css">
+          Scan area mask examples
+          <img
+            class="info"
+            :src="infoIcon"
+            title="Examples of CSS classes for the 'mask-css' attribute"
+          >
+        </label>
         <select
           v-model="maskCss"
           class="u-full-width"
@@ -187,11 +246,18 @@
           <option value="plain-center">Plain centered</option>
           <option value="marching-ants">Marching ants</option>
           <option value="feedback">Text feedback</option>
-          <option value="corners">Feedback corners</option>
+          <option value="corners">Corners giving feedback</option>
           <option value="eccentric">Eccentric</option>
         </select>
 
-        <label for="highlight-css">Barcode highlighting examples</label>
+        <label for="highlight-css">
+          Barcode highlighting examples
+          <img
+            class="info"
+            :src="infoIcon"
+            title="Examples of CSS classes for the 'highlight-css' attribute"
+          >
+        </label>
         <select
           v-model="highlightCss"
           class="u-full-width"
@@ -202,12 +268,19 @@
           <option value="simple">Alternate color</option>
           <option value="format-label">Format as text</option>
           <option value="color-coded">Color indicates format</option>
-          <option value="pointers">Corners, surrounding area shaded</option>
+          <option value="pointers">Corners, surrounding area dimmed</option>
         </select>
       </div>
 
       <div class="six columns">
-        <label for="formats">Barcode format(s) to detect</label>
+        <label for="formats">
+          Barcode format(s) to detect
+          <img
+            class="info"
+            :src="infoIcon"
+            title="Supported barcode formats; the selected ones become the 'formats' attribute"
+          >
+        </label>
         <select
           class="u-full-width"
           id="formats"
@@ -227,6 +300,7 @@
 
 <script>
 // Data URIs created by @rollup/plugin-image
+import INFO_ICON from './assets/info.png'
 import ARROW_DOWN from './assets/arrow-down.png'
 import ARROW_LEFT from './assets/arrow-left.png'
 import ARROW_RIGHT from './assets/arrow-right.png'
@@ -241,7 +315,9 @@ const ACTIVE_SOURCE = {
     VIDEO: 2,    // embedded <video> element
 }
 
-const ARROWS = [ARROW_UP, ARROW_RIGHT, ARROW_DOWN, ARROW_LEFT]
+const
+    ARROWS = [ARROW_UP, ARROW_RIGHT, ARROW_DOWN, ARROW_LEFT],
+    ORIENTATIONS = ['upright', 'rotated 90° right', 'upside down', 'rotated 90° left']
 
 const DEFAULT_FORMATS = [ 'code_128', 'code_39', 'ean_13', 'itf', 'qr_code', 'upc_a' ]
 
@@ -251,7 +327,7 @@ const DEFAULT_FORMATS = [ 'code_128', 'code_39', 'ean_13', 'itf', 'qr_code', 'up
  */
 function getNativeBarcodeDetector() {
     try {
-        new window['BarcodeDetector']()
+        (new window['BarcodeDetector']()).getContext('2d')
         return window['BarcodeDetector']
     } catch {}
 }
@@ -309,8 +385,16 @@ export default {
             return { facingMode: 'environment' }
         },
 
+        infoIcon() {
+            return INFO_ICON
+        },
+
         arrows() {
             return ARROWS
+        },
+
+        orientations() {
+            return ORIENTATIONS
         },
 
         scansPerSec() {
@@ -490,6 +574,11 @@ h4 > span {
     margin-right: 2em;
 }
 
+img.info {
+    vertical-align: text-bottom;
+    margin-left: 0.5em;
+}
+
 .row {
     max-width: 80rem;
 }
@@ -520,10 +609,6 @@ td > pre {
 td > input[type='checkbox'] {
     margin: 0;
     pointer-events: none;
-}
-
-td > img {
-    vertical-align: middle;
 }
 
 #source-container {

@@ -1,6 +1,6 @@
 {
   "name": "@undecaf/vue-barcode-scanner-example",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "type": "module",
   "scripts": {
     "prebuild": "rimraf ../docs/example/assets/*",
@@ -9,9 +9,9 @@
   "author": "F. Kasper <fkasper@modus-operandi.at>",
   "license": "MIT",
   "dependencies": {
+    "@fontsource/roboto": "^4.5.1",
     "@undecaf/barcode-detector-polyfill": "^0.9.9",
-    "@undecaf/vue-barcode-scanner": "../",
-    "@fontsource/roboto": "^4.5.1"
+    "@undecaf/vue-barcode-scanner": "../"
   },
   "devDependencies": {
     "@rollup/plugin-image": "^2.1.1",
