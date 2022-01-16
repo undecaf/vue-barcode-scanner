@@ -10,20 +10,19 @@ This Vue component, `BarcodeScanner`, offers the following features:
 
 + Scans `<img>`, `<canvas>` and live `<video>` elements, `MediaStream`s (cameras), 
   image and video `Blob`s and `File`s and more
++ Renders sources that are not DOM elements (e.g. `MediaStream`, `File`) automatically
 + Reports detected barcodes, status and errors as events
 + Scans videos repeatedly as long as they are playing
 + Can restrict scanning to a region of the source area
-+ The display style of the scanning region is user definable
-+ Renders sources that are not DOM elements (e.g. `MediaStream`, `File`) automatically
-+ Highlights detected barcodes in user-defined style
++ Applies user-defined styles to the scanning region and for highlighting detected barcodes
 + Handles source and configuration changes reactively
 + Relies on the
-  [Barcode Detection API for browsers](https://developer.mozilla.org/en-US/docs/Web/API/Barcode_Detection_API)
+  [Barcode Detection API](https://developer.mozilla.org/en-US/docs/Web/API/Barcode_Detection_API)
   or on any available polyfill
 + Detects all barcodes that
   [the underlying `BarcodeDetector`](https://developer.mozilla.org/en-US/docs/Web/API/Barcode_Detection_API#supported_barcode_formats)
   or polyfill supports
-+ Provides a configurable limit for the JavaScript processing load
++ Adapts the scanning frequency automatically to stay below a configurable processing load limit
 
 You can try these features on an [extensive online example](https://undecaf.github.io/vue-barcode-scanner/example/)
 ([source code](https://github.com/undecaf/vue-barcode-scanner/blob/master/example)).
@@ -63,7 +62,8 @@ $ npm install @undecaf/vue-barcode-scanner
 $ yarn add @undecaf/vue-barcode-scanner
 ```
 
-Then `import BarcodeScanner from '@undecaf/vue-barcode-scanner'` where required.
+Then `import BarcodeScanner from '@undecaf/vue-barcode-scanner'` where required and place as
+`<barcode-scanner>` in your template.
 
 
 ### As plain `<script>`
@@ -77,17 +77,21 @@ This exposes the component as global variable `barcodeScanner`.
 
 ### Polyfilling `BarcodeDetector`
 
+`BarcodeScanner` relies on the [Barcode Detection API](https://developer.mozilla.org/en-US/docs/Web/API/Barcode_Detection_API)
+to do its work. For [browsers that do not yet implement this API](https://caniuse.com/mdn-api_barcodedetector),
+a polyfill will be required.
+
 The following snippets use
 [`@undecaf/barcode-detector-polyfill`](https://www.npmjs.com/package/@undecaf/barcode-detector-polyfill)
-(written by the same author as this component) as an example for a polyfill.
+(written by the same author as this component) as an example.
 
-For an ES module:
+Polyfilling if necessary for an ES module:
 
 ```javascript
 import { BarcodeDetectorPolyfill } from '@undecaf/barcode-detector-polyfill'
 
 try {
-    new window['BarcodeDetector']()
+    (new window['BarcodeDetector']()).getContext('2d')
 } catch {
     window['BarcodeDetector'] = BarcodeDetectorPolyfill
 }
@@ -100,7 +104,7 @@ In a plain `<script>`:
 <script src="https://cdn.jsdelivr.net/npm/@undecaf/barcode-detector-polyfill/dist/index.js"></script>
 <script>
     try {
-        new window['BarcodeDetector']()
+        (new window['BarcodeDetector']()).getContext('2d')
     } catch {
         window['BarcodeDetector'] = barcodeDetectorPolyfill.BarcodeDetectorPolyfill
     }
@@ -113,9 +117,9 @@ In a plain `<script>`:
 
 ### Source element
 
-The  component needs an image or video source that is to be scanned for barcodes.
+`BarcodeScanner` needs an image or video source that is to be scanned for barcodes.
 This can be an `<img>`, `<canvas>` or `<video>` element
-or a container (component) having one of these as a descendant
+or a container (a component) having one of these as a descendant
 (for other types of sources, see the [`source` attribute](#source)). For example:
 
 ```html
@@ -124,13 +128,14 @@ or a container (component) having one of these as a descendant
 </barcode-scanner>
 ```
 
-The source element/container must be the only `<barcode-scanner>` child.
-As part of a container, `<img>`/`<canvas>`/`<video>` must cover that container exactly 
+The source element/container must be the only child of `<barcode-scanner>`.
+If inside a container, `<img>`/`<canvas>`/`<video>` must cover that container exactly 
 in order for [masks](#mask-css) and [barcode highlights](#highlight-css) to appear in correct positions.
-The [`source` attribute](#source) may specify a selector for a particular source element inside the container.
+The [`source` attribute](#source) may specify a CSS selector for a particular source element inside the container.
 
 The source element and the `src` and `srcObject` attributes are reactive, i.e. changed content
-is scanned automatically. Videos are scanned repeatedly while being played. Animated `<canvas>` content can be
+is scanned automatically. Video sources are scanned repeatedly while being played. If `<canvas>` content is animated
+then it can be
 [captured](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/captureStream)
 and passed as [`source` attribute](#source).
 
@@ -139,7 +144,7 @@ and passed as [`source` attribute](#source).
 
 All attributes are reactive. Try them in the [example project](https://undecaf.github.io/vue-barcode-scanner/example/)!
 
-+ <a name="source">`source`</a>: the image/video source that is to be shown/played as `<barcode-scanner>` content
++ <a name="source">`source`</a>: the image/video source that is to be shown/played inside `<barcode-scanner>`
   and that is to be scanned for barcodes.
   Must be specified if `<barcode-scanner>` does not contain a [source element](#source-element).
 
@@ -168,7 +173,7 @@ All attributes are reactive. Try them in the [example project](https://undecaf.g
   If this attribute is omitted then all available formats will be detected.
 
 + <a name="mask-css">`mask-css`</a> (optional): the CSS class(es) for a `<div>` that overlays the source and defines 
-  a reduced scanning region.
+  a reduced scanning area.
   Only content inside the border box of that `<div>` will be scanned if this attribute is specified.
   This can increase performance considerably.
 
@@ -186,7 +191,7 @@ All attributes are reactive. Try them in the [example project](https://undecaf.g
   ```
   
   CSS class `.detected` is added to the `<div>` automatically if any barcode was detected.
-  The names of the detected barcode `format`s (in original spelling and kebab case)
+  The names of the detected barcode `format`s (in original spelling and in kebab case)
   are also added as CSS classes. This allows visual feedback on detection, for example:
 
   ```css
@@ -203,10 +208,10 @@ All attributes are reactive. Try them in the [example project](https://undecaf.g
   }
   ```
   
-  More examples can be found in the [example CSS](https://github.com/undecaf/vue-barcode-scanner/blob/master/example/src/css).
+  More examples can be found in the [example styles](https://github.com/undecaf/vue-barcode-scanner/blob/master/example/src/css).
 
 + <a name="highlight-css">`highlight-css`</a> (optional): the CSS class(es) for the `<div>`s that each enclose a detected barcode. 
-  These `<div>`s are placed and sized automatically, therefore the CSS styles must not affect position and size.
+  These `<div>`s are placed and sized automatically, therefore the CSS styles must not affect their position and size.
   For example:
 
   ```css
@@ -216,7 +221,7 @@ All attributes are reactive. Try them in the [example project](https://undecaf.g
   }
   ```
   
-  Each `<div>` also receives the name of the respective barcode `format` (in original spelling and kebab case)
+  Each `<div>` also receives the name of the respective barcode `format` (in original spelling and in kebab case)
   as additional CSS classes. This allows format-specific highlighting, for example:
 
   ```css
@@ -226,13 +231,13 @@ All attributes are reactive. Try them in the [example project](https://undecaf.g
   }
   ```
   
-  More examples can be found in the [example CSS](https://github.com/undecaf/vue-barcode-scanner/blob/master/example/src/css).
+  More examples can be found in the [example styles](https://github.com/undecaf/vue-barcode-scanner/blob/master/example/src/css).
 
   If this property is omitted then detected barcodes will be enclosed in a green (`#80ff80`) border.
   To disable highlighting entirely, set `:highlight-css="null"`.
 
 + <a name="scanning">`scanning`</a> (optional): as a `boolean` input, starts and stops scanning; as a`boolean` output,
-  indicates whether scanning is in progress. In order to work like this, a _variable_ must be bound with the
+  indicates whether scanning is in progress. In order to work in this bidirectional mode, a _variable_ must be bound with the
   [`.sync` modifier](https://vuejs.org/v2/guide/components-custom-events.html#sync-Modifier).
 
   Usually this attribute is not needed because scanning starts automatically whenever the source, 
@@ -243,7 +248,7 @@ All attributes are reactive. Try them in the [example project](https://undecaf.g
 
   If missing or invalid then `rate` defaults to `20/s`.
 
-+ <a name="debug">`debug`</a> (optional): if `true` then debug messages are logged at the console; defaults to `false`.
++ <a name="debug">`debug`</a> (optional): if `true` then debug messages and events are logged at the console; defaults to `false`.
   This impacts performance, not recommended for production. 
 
 
@@ -263,14 +268,14 @@ All attributes are reactive. Try them in the [example project](https://undecaf.g
 
   Additional properties may be returned by a `BarcodeDetector` polyfill.
 
-+ <a name="bcs-started">`bcs-started`</a>: signals that scanning has started automatically or as commanded by 
-  [`scanning`](#scanning) and that one (for an image souce)
++ <a name="bcs-started">`bcs-started`</a>: signals that scanning has started automatically or as requested by 
+  [`scanning`](#scanning) and that one (for an image source)
   or more (for a video source) [`bcs-scanned`](#bcs-scanned) events are to be expected.
 
-+ <a name="bcs-stopped">`bcs-stopped`</a>: emitted after an image source was scanned once or after repeated scanning of a video source
-  stopped because the video stopped playing or because commanded by [`scanning`](#scanning).
++ <a name="bcs-stopped">`bcs-stopped`</a>: emitted after an image source was scanned once or when repeated scanning of a video source
+  stopped because the video stopped playing or as requested by [`scanning`](#scanning).
 
-+ <a name="bcs-error">`bcs-error`</a>: indicates an error with details passed as event payload.
++ <a name="bcs-error">`bcs-error`</a>: indicates an error with the details passed as event payload.
   
 
 If desired then the names of the events described above can be imported as constants:
