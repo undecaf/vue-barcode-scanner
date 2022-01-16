@@ -1,0 +1,9 @@
+{
+  "src": "tests/e2e/**/*.test.js",
+  "browsers": [ "chromium:headless", "firefox:headless" ],
+  "speed": 1,
+  "screenshots": {
+    "path": "screenshots/",
+    "takeOnFails": true
+  }
+}

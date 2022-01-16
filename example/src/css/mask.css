@@ -1,0 +1,122 @@
+/*
+ * Scan area mask examples
+ * =======================
+ *
+ * Position and dimensions should be specified as percentages of the viewport size.
+ *
+ * position:absolute and box-sizing:border-box are enforced, i.e. the mask border
+ * is always part of the scan area.
+ */
+
+
+/*
+ * Centered mask, surrounding area is shaded
+ */
+.plain-center {
+    left: 25%;
+    top: 20%;
+    width: 50%;
+    height: 60%;
+    box-shadow: 0 0 0 10000px /* to cover the largest possible viewport */ rgba(0, 0, 0, 0.4);
+}
+
+
+/*
+ * Centered mask with detection feedback
+ */
+.feedback {
+    left: 25%;
+    top: 20%;
+    width: 50%;
+    height: 60%;
+    box-shadow: 0 0 0 10000px /* to cover the largest possible viewport */ rgba(0, 0, 0, 0.4);
+}
+
+.feedback.detected::before {
+    content: 'Barcode detected!';
+    display: block;
+    text-align: center;
+    font-weight: bolder;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+
+/*
+ * Ants marching around the centered mask (animated GIF)
+ */
+.marching-ants {
+    left: 25%;
+    top: 20%;
+    width: 50%;
+    height: 60%;
+    border: transparent solid 2px;
+    border-image: url('../assets/ants.gif') 1 repeat repeat;
+    box-shadow: 0 0 0 10000px rgba(0, 0, 0, 0.4);
+}
+
+
+/*
+ * Centered mask with highlighted corners that change on barcode detection
+ *
+ * Corner size is adjusted by media queries
+ */
+.corners {
+    left: 25%;
+    top: 20%;
+    width: 50%;
+    height: 60%;
+    color: rgba(0,0,0,0.4);
+    border: transparent solid 16px;
+    border-image: url('../assets/corners-striped.png') 50% repeat repeat;
+    box-shadow: 0 0 0 10000px rgba(0, 0, 0, 0.4);
+}
+
+.corners.detected {
+    border-image: url('../assets/corners-green.png') 50% repeat repeat;
+}
+
+@media (min-width: 400px) {
+    .corners {
+        border-width: 24px;
+    }
+}
+
+@media (min-width: 550px) {
+    .corners {
+        border-width: 36px;
+    }
+}
+
+@media (min-width: 750px) {
+    .corners {
+        border-width: 48px;
+    }
+}
+
+
+/*
+ * Eccentric off-center mask (maybe not to everyone's taste)
+ */
+@keyframes eccentric {
+    from, to {
+        border-color: transparent;
+    }
+
+    50% {
+        border-color: rgb(255, 0, 255);
+    }
+}
+
+.eccentric {
+    left: 10%;
+    top: 20%;
+    width: 60%;
+    height: 45%;
+    border: rgb(255, 0, 255) dotted 6px;
+    border-radius: 12px;
+    box-shadow: 0 0 100px 100px rgba(255, 0, 255, 0.5);
+}
+
+.eccentric:not(.detected) {
+    animation: eccentric 0.3s step-end infinite;
+}

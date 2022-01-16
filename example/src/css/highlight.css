@@ -1,0 +1,90 @@
+/*
+ * Barcode highlighting examples
+ * =============================
+ */
+
+
+/*
+ * Colored border, translucent background
+ */
+.simple {
+    border: #24aedb solid 2px;
+    background-color: rgba(36, 174, 219, 0.3);
+}
+
+
+/*
+ * Color depends on barcode format
+ */
+.color-coded {
+    border: #24aedb solid 2px;
+    background-color: rgba(36, 174, 219, 0.3);
+    border-radius: 5px;
+}
+
+.color-coded.code-128 {
+    border-color: #ff8080;
+    background-color: rgba(255, 128, 128, 0.3);
+}
+
+.color-coded.ean-13 {
+    border-color: #80ff80;
+    background-color: rgba(128, 255, 128, 0.3);
+}
+
+.color-coded.qr-code {
+    border-color: #8a2be2;
+    background-color: rgba(138, 43, 228, 0.3);
+}
+
+
+/*
+ * Barcode format shown as text
+ */
+.format-label {
+    border: #24aedb solid 2px;
+    background-color: rgba(36, 174, 219, 0.3);
+    border-radius: 5px;
+}
+
+.format-label::before {
+    display: block;
+    text-align: center;
+    font-weight: bolder;
+    color: #ffffff;
+    background-color: #24aedb;
+}
+
+.format-label.code-39::before {
+    content: 'Code-39';
+}
+
+.format-label.code-128::before {
+    content: 'Code-128';
+}
+
+.format-label.ean-13::before {
+    content: 'EAN-13';
+}
+
+.format-label.itf:before {
+    content: 'Interleaved 2 of 5';
+}
+
+.format-label.qr-code:before {
+    content: 'QR code';
+}
+
+.format-label.upc-a:before {
+    content: 'UPC-A';
+}
+
+
+/*
+ * Pointers to the corners of the barcode
+ */
+.pointers {
+    border: transparent solid 16px;
+    border-image: url('../assets/pointers.png') 50% repeat repeat;
+    box-shadow: 0 0 10px 10px rgba(0, 0, 0, 0.4);
+}
