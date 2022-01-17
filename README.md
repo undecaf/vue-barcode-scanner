@@ -24,7 +24,7 @@ This Vue component, `BarcodeScanner`, offers the following features:
   or polyfill supports
 + Adapts the scanning frequency automatically to stay below a configurable processing load limit
 
-You can try these features on an [extensive online example](https://undecaf.github.io/vue-barcode-scanner/example/)
+Try these features on this [online example](https://undecaf.github.io/vue-barcode-scanner/example/)
 ([source code](https://github.com/undecaf/vue-barcode-scanner/blob/master/example)).
 
 
@@ -63,7 +63,8 @@ $ yarn add @undecaf/vue-barcode-scanner
 ```
 
 Then `import BarcodeScanner from '@undecaf/vue-barcode-scanner'` where required and place as
-`<barcode-scanner>` in your template.
+`<barcode-scanner>` in your template. [This CodePen](https://codepen.io/undecaf/pen/xxXBapJ)
+demonstrates the scanner in a Vue SFC.
 
 
 ### As plain `<script>`
@@ -72,7 +73,8 @@ Then `import BarcodeScanner from '@undecaf/vue-barcode-scanner'` where required 
 <script src="https://cdn.jsdelivr.net/npm/@undecaf/vue-barcode-scanner/dist/index.js"></script>
 ```
 
-This exposes the component as global variable `barcodeScanner`.
+This exposes the component options object as `barcodeScanner.default`.
+[This CodePen](https://codepen.io/undecaf/pen/wvrOOEZ) shows the scanner in a Vue `<script>`.
 
 
 ### Polyfilling `BarcodeDetector`
@@ -85,7 +87,7 @@ The following snippets use
 [`@undecaf/barcode-detector-polyfill`](https://www.npmjs.com/package/@undecaf/barcode-detector-polyfill)
 (written by the same author as this component) as an example.
 
-Polyfilling if necessary for an ES module:
+Polyfill if necessary in an ES module (also shown in [this CodePen](https://codepen.io/undecaf/pen/xxXBapJ)):
 
 ```javascript
 import { BarcodeDetectorPolyfill } from '@undecaf/barcode-detector-polyfill'
@@ -98,9 +100,10 @@ try {
     ⁝
 ```
 
-In a plain `<script>`:
+In a plain `<script>` (shown in [this CodePen](https://codepen.io/undecaf/pen/wvrOOEZ)):
 
 ```html
+<script src="https://cdn.jsdelivr.net/npm/@undecaf/zbar-wasm/dist/index.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@undecaf/barcode-detector-polyfill/dist/index.js"></script>
 <script>
     try {
@@ -129,15 +132,14 @@ or a container (a component) having one of these as a descendant
 ```
 
 The source element/container must be the only child of `<barcode-scanner>`.
-If inside a container, `<img>`/`<canvas>`/`<video>` must cover that container exactly 
+If located inside a container then `<img>`/`<canvas>`/`<video>` must cover that container exactly 
 in order for [masks](#mask-css) and [barcode highlights](#highlight-css) to appear in correct positions.
 The [`source` attribute](#source) may specify a CSS selector for a particular source element inside the container.
 
 The source element and the `src` and `srcObject` attributes are reactive, i.e. changed content
-is scanned automatically. Video sources are scanned repeatedly while being played. If `<canvas>` content is animated
-then it can be
-[captured](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/captureStream)
-and passed as [`source` attribute](#source).
+is scanned automatically. Video sources are scanned repeatedly while being played.
+To scan animated `<canvas>` content, [capture it as `MediaStream`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/captureStream)
+and pass that to the [`source` attribute](#source).
 
 
 ### Attributes
@@ -284,6 +286,7 @@ If desired then the names of the events described above can be imported as const
 import { SCANNED_EVENT, STARTED_EVENT, STOPPED_EVENT, ERROR_EVENT } from 'undecaf/vue-barcode-scanner'
 ```
 
+In a [plain script](#as-plain-script), these constants are named `barcodeScanner.SCANNED_EVENT` etc. 
 
 ## License
 
