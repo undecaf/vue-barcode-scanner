@@ -126,8 +126,7 @@ export default {
 
     props: {
         source: {
-            type: Object,
-            required: false,
+            default: null,
         },
 
         formats: {
