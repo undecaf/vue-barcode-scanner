@@ -121,9 +121,9 @@ In a plain `<script>` (shown in [this CodePen](https://codepen.io/undecaf/pen/wv
 ### Source element
 
 `BarcodeScanner` needs an image or video source that is to be scanned for barcodes.
-This can be an `<img>`, `<canvas>` or `<video>` element
-or a container (a component) having one of these as a descendant
-(for other types of sources, see the [`source` attribute](#source)). For example:
+This can be an `<img>`, `<canvas>` or `<video>` element, or a container or a Vue component
+having one of these elements as descendant (for other source types, see the [`source` attribute](#source)).
+For example:
 
 ```html
 <barcode-scanner ...>
@@ -136,7 +136,7 @@ If located inside a container then `<img>`/`<canvas>`/`<video>` must cover that 
 in order for [masks](#mask-css) and [barcode highlights](#highlight-css) to appear in correct positions.
 The [`source` attribute](#source) may specify a CSS selector for a particular source element inside the container.
 
-The source element and the `src` and `srcObject` attributes are reactive, i.e. changed content
+The source element and its `src` and `srcObject` attributes are reactive, i.e. changed content
 is scanned automatically. Video sources are scanned repeatedly while being played.
 To scan animated `<canvas>` content, [capture it as `MediaStream`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/captureStream)
 and pass that to the [`source` attribute](#source).

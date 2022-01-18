@@ -168,7 +168,7 @@ export default {
             // provided by the client, or a source renderer created by this component
             srcElem: null,
 
-            // Type (tag name) of source renderer, or null if srcElem is provided by the client
+            // Requested type (tag name) of source renderer, or null if srcElem is provided by the client
             srcRendererTag: null,
 
             // Observes changes of the source element
@@ -469,15 +469,18 @@ export default {
              * with the specified tag.
              */
             const createSrcRenderer = (tag) => {
-                // Destroy the previous renderer to get rid of event listeners
-                this.srcRendererTag = null
+                this.srcRendererTag = tag
 
                 return new Promise(resolve => {
-                    // The <component> needs a tick to react to the new 'is' value
                     this.$nextTick(() => {
-                        // Previous renderer was destroyed, now create the requested one
-                        this.srcRendererTag = tag
-                        this.$nextTick(() => resolve(this.$refs.srcRendererElem))
+                        // Do we have the requested source renderer now?
+                        if (this.currentSrcRendererTag() === tag) {
+                            resolve(this.$refs.srcRendererElem)
+
+                        } else {
+                            // Wait for one next tick
+                            createSrcRenderer(tag)
+                        }
                     })
                 })
             }
@@ -487,7 +490,9 @@ export default {
              * renders the specified Blob.
              */
             const installImgRenderer = (blob) => {
-                createSrcRenderer('img')
+                // First destroy the previous renderer (if any) to get rid of event listeners
+                createSrcRenderer(null)
+                    .then(() => createSrcRenderer('img'))
                     .then(srcElem => {
                         srcElem.crossorigin = 'anonymous'
                         srcElem.srcObject = null
@@ -510,7 +515,9 @@ export default {
              * and starts playing the specified Blob or MediaStream.
              */
             const installVideoRenderer = ({ blob = null, mediaStream = null }) => {
-                createSrcRenderer('video')
+                // First destroy the previous renderer (if any) to get rid of event listeners
+                createSrcRenderer(null)
+                    .then(() => createSrcRenderer('video'))
                     .then(srcElem => {
                         srcElem.addEventListener('play', () => {
                             this.log('attached video plays')
@@ -546,7 +553,9 @@ export default {
              * the specified image onto it.
              */
             const installCanvasRenderer = ({ source, image = source, drawMethod }) => {
-                createSrcRenderer('canvas')
+                // First destroy the previous renderer (if any) to get rid of event listeners
+                createSrcRenderer(null)
+                    .then(() => createSrcRenderer('canvas'))
                     .then(srcElem => {
                         this.log(() => `attaching canvas renderer for ${source.constructor.name}`)
 
@@ -681,6 +690,19 @@ export default {
             this.barcodes = []
             this.srcRendererTag = null
             this.srcElem = null
+        },
+
+        /**
+         * Returns the tag name of the current source renderer element,
+         * or null if there is none.
+         * On source renderer changes, this will likely be different
+         * from this.srcRendererTag for one or more ticks until Vue
+         * has updated the srcRendererElem.
+         */
+        currentSrcRendererTag() {
+            const srcRendererElem = this.$refs.srcRendererElem
+
+            return srcRendererElem && srcRendererElem.tagName.toLowerCase() || null
         },
 
 
