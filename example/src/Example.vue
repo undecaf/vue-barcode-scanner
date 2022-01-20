@@ -54,7 +54,7 @@
         </thead>
         <tbody>
           <tr v-for="b in barcodes" :key="b.rawValue">
-            <td><pre :title="b.rawValue">{{ b.rawValue }}</pre></td>
+            <td><pre>{{ b.rawValue }}</pre></td>
             <td>
               <code>{{ b.format }}</code>
               <img class="info" :src="arrows[b.orientation]" :title="orientations[b.orientation]">
@@ -327,7 +327,7 @@ const DEFAULT_FORMATS = [ 'code_128', 'code_39', 'ean_13', 'itf', 'qr_code', 'up
  */
 function getNativeBarcodeDetector() {
     try {
-        (new window['BarcodeDetector']()).getContext('2d')
+        window['BarcodeDetector'].getSupportedFormats()
         return window['BarcodeDetector']
     } catch {}
 }
@@ -602,8 +602,10 @@ th, td {
 
 td > pre {
     margin: 0;
-    text-overflow: ellipsis;
-    overflow-x: hidden;
+    text-align: left;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow: hidden;
 }
 
 td > input[type='checkbox'] {
