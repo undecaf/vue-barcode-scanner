@@ -93,7 +93,7 @@ Polyfill if necessary in an ES module (also shown in [this CodePen](https://code
 import { BarcodeDetectorPolyfill } from '@undecaf/barcode-detector-polyfill'
 
 try {
-    (new window['BarcodeDetector']()).getContext('2d')
+    window['BarcodeDetector'].getSupportedFormats()
 } catch {
     window['BarcodeDetector'] = BarcodeDetectorPolyfill
 }
@@ -107,7 +107,7 @@ In a plain `<script>` (shown in [this CodePen](https://codepen.io/undecaf/pen/wv
 <script src="https://cdn.jsdelivr.net/npm/@undecaf/barcode-detector-polyfill/dist/index.js"></script>
 <script>
     try {
-        (new window['BarcodeDetector']()).getContext('2d')
+        window['BarcodeDetector'].getSupportedFormats()
     } catch {
         window['BarcodeDetector'] = barcodeDetectorPolyfill.BarcodeDetectorPolyfill
     }
