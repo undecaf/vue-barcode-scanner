@@ -205,14 +205,17 @@
             :src="infoIcon"
             title="Indicates the value of the 'scanning' attribute and can override it"
           >
+          
+          <input type="checkbox" v-model="singleScans">
+          <span class="label-body">Single scans</span>
         </label>
 
         <label for="rate">
-          <input type="radio" v-model="rateSuffix" value="/s">
+          <input type="radio" v-model="rateSuffix" value="/s" :disabled="singleScans">
           <span title="Target scanning frequency for 'rate' attribute">
             Scans/s
           </span>
-          <input type="radio" v-model="rateSuffix" value="%">
+          <input type="radio" v-model="rateSuffix" value="%" :disabled="singleScans">
           <span title="% of processing time to use for barcode detection, sets the 'rate' attribute">processing load %</span>
           <span v-show="isScanning" title="Actual scanning frequency, may be limited by processing speed">
             (actual: {{ scansPerSecFormat.format(scansPerSec) }}/s)
@@ -227,6 +230,7 @@
           step="9"
           placeholder="1 ... 100"
           v-model.number="rateValue"
+          :disabled="singleScans"
         >
 
         <label for="mask-css">
@@ -353,6 +357,7 @@ export default {
             mediaResponse: null,
             enteringUrl: false,
             scanning: false,
+            singleScans: false,
             supportedFormats: [],
             formats: [],
             rateValue: 20,
@@ -495,6 +500,10 @@ export default {
 
             this.scanInstants.unshift(performance.now())
             this.scanInstants.length = Math.min(this.scanInstants.length, maxScanInstants)
+
+            if (this.singleScans) {
+                this.scanning = false
+            }
 
             this.error = null
           },
@@ -640,5 +649,9 @@ input[type='radio'] + span {
 
 input[type='file'] {
     display: none;
+}
+
+img.info + input {
+    margin-left: 1em;
 }
 </style>
