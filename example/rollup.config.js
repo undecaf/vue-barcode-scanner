@@ -1,3 +1,4 @@
+import copy from 'rollup-plugin-copy'
 import image from '@rollup/plugin-image'
 import postcss from 'rollup-plugin-postcss'
 import replace from '@rollup/plugin-replace'
@@ -14,13 +15,13 @@ import { ZBAR_WASM_REPOSITORY } from '@undecaf/barcode-detector-polyfill/zbar-wa
 const zbarWasmRepository =
     (typeof ALTERNATE_ZBAR_WASM_REPOSITORY !== 'undefined') ? ALTERNATE_ZBAR_WASM_REPOSITORY : ZBAR_WASM_REPOSITORY
 
-const outputBase = '../docs/example'
+const outputDir = '../docs/example'
 
 export default [
     {
         input: 'src/main.js',
         output: {
-            file: `${outputBase}/js/main.js`,
+            file: `${outputDir}/js/main.js`,
             format: 'esm',
             generatedCode: 'es2015',
             sourcemap: false,
@@ -34,7 +35,7 @@ export default [
             vue(),
 
             postcss({
-                to: `${outputBase}/.`,
+                to: `${outputDir}/.`,
                 minimize: true,
                 sourcemap: false,
                 plugins: [
@@ -53,9 +54,16 @@ export default [
 
             nodeResolve(),
 
+            copy({
+                targets: [
+                    { src: 'public/*', dest: outputDir },
+                    { src: 'src/index-rollup.html', dest: outputDir, rename: 'index.html' },
+                ],
+            }),
+
             replace({
                 values: {
-                    // Replaces the repository URL with the alternate repository URL if necessary
+                    // Replace the repository URL with the alternate repository URL if necessary
                     [ZBAR_WASM_REPOSITORY]: zbarWasmRepository,
                     'process.env.NODE_ENV': JSON.stringify('production'),
                 },

@@ -1,9 +1,10 @@
 # A barcode/QR code scanner for Vue 2
 
-![Minified size](https://badgen.net/bundlephobia/min/@undecaf/vue-barcode-scanner)
+![Minified size](https://badgen.net/packagephobia/install/@undecaf/vue-barcode-scanner?color=42cc24)
 ![Open issues](https://badgen.net/github/open-issues/undecaf/vue-barcode-scanner)
 ![Vulnerabilities](https://snyk.io/test/npm/@undecaf/vue-barcode-scanner/badge.svg)
 ![Total downloads](https://badgen.net/npm/dt/@undecaf/vue-barcode-scanner)
+[![](https://badgen.net/jsdelivr/hits/npm/@undecaf/vue-barcode-scanner)](https://www.jsdelivr.com/package/npm/@undecaf/vue-barcode-scanner)
 ![License](https://badgen.net/github/license/undecaf/vue-barcode-scanner)
 
 This Vue component, `BarcodeScanner`, offers the following features:
@@ -25,7 +26,8 @@ This Vue component, `BarcodeScanner`, offers the following features:
 + Adapts the scanning frequency automatically to stay below a configurable processing load limit
 
 Try these features on this [online example](https://undecaf.github.io/vue-barcode-scanner/example/)
-([source code](https://github.com/undecaf/vue-barcode-scanner/blob/master/example)).
+([source code](https://github.com/undecaf/vue-barcode-scanner/blob/master/example)
+with build scripts for Rollup and Webpack/Vue CLI).
 
 
 ## Contents
