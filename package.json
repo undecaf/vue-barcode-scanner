@@ -39,13 +39,14 @@
     "serve:e2e": "serve -l 8081 ./tests/e2e/",
     "lint": "eslint '{src,tests}/**/*.{js,vue}'",
     "lint:fix": "npm run lint -- --fix",
+    "npm:audit": "npm audit --omit=dev",
     "test:e2e": "testcafe"
   },
-  "dependencies": {},
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^13.1.1",
     "@vue/cli": "^4.5.13",
     "@vue/test-utils": "^1.2.0",
+    "babel-eslint": "^10.1.0",
     "eslint": "^6.8.0",
     "eslint-plugin-html": "^6.1.2",
     "eslint-plugin-import": "^2.22.1",
