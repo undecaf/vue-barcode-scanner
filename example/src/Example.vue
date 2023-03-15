@@ -205,7 +205,7 @@
             :src="infoIcon"
             title="Indicates the value of the 'scanning' attribute and can override it"
           >
-          
+
           <input type="checkbox" v-model="singleScans">
           <span class="label-body">Single scans</span>
         </label>
@@ -544,7 +544,7 @@ export default {
                 this.sourceOption = this.file = files[0]
             }
         },
-        
+
         enterUrl() {
             this.enteringUrl = true
             this.$nextTick(() => this.$refs.mediaUrl.focus())

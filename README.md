@@ -27,7 +27,7 @@ This Vue component, `BarcodeScanner`, offers the following features:
 
 Try these features on this [online example](https://undecaf.github.io/vue-barcode-scanner/example/)
 ([source code](https://github.com/undecaf/vue-barcode-scanner/blob/master/example)
-with build scripts for Rollup and Webpack/Vue CLI).
+with build scripts for Rollup, esbuild and Webpack/Vue CLI).
 
 
 ## Contents
@@ -174,7 +174,7 @@ All attributes are reactive. Try them in the [example project](https://undecaf.g
   const formats = await BarcodeDetector.getSupportedFormats()
   ```
   
-  If this attribute is omitted then all available formats will be detected.
+  If this attribute is omitted then all supported formats will be detected.
 
 + <a name="mask-css">`mask-css`</a> (optional): the CSS class(es) for a `<div>` that overlays the source and defines 
   a reduced scanning area.
@@ -212,7 +212,7 @@ All attributes are reactive. Try them in the [example project](https://undecaf.g
   }
   ```
   
-  More examples can be found in the [example styles](https://github.com/undecaf/vue-barcode-scanner/blob/master/example/src/css).
+  More examples can be found in the [mask style examples](https://github.com/undecaf/vue-barcode-scanner/blob/master/example/src/css/mask.css).
 
 + <a name="highlight-css">`highlight-css`</a> (optional): the CSS class(es) for the `<div>`s that each enclose a detected barcode. 
   These `<div>`s are placed and sized automatically, therefore the CSS styles must not affect their position and size.
@@ -235,13 +235,14 @@ All attributes are reactive. Try them in the [example project](https://undecaf.g
   }
   ```
   
-  More examples can be found in the [example styles](https://github.com/undecaf/vue-barcode-scanner/blob/master/example/src/css).
+  More examples can be found in the [highlight style examples](https://github.com/undecaf/vue-barcode-scanner/blob/master/example/src/css/highlight.css).
 
   If this property is omitted then detected barcodes will be enclosed in a green (`#80ff80`) border.
   To disable highlighting entirely, set `:highlight-css="null"`.
 
 + <a name="scanning">`scanning`</a> (optional): as a `boolean` input, starts and stops scanning; as a`boolean` output,
-  indicates whether scanning is in progress. In order to work in this bidirectional mode, a _variable_ must be bound with the
+  indicates whether scanning is in progress. In order to work in this bidirectional mode, a _variable_ must be bound 
+  to this attribute with the
   [`.sync` modifier](https://vuejs.org/v2/guide/components-custom-events.html#sync-Modifier).
 
   Usually this attribute is not needed because scanning starts automatically whenever the source, 
@@ -270,11 +271,11 @@ All attributes are reactive. Try them in the [example project](https://undecaf.g
   + `cornerPoints`: an arry of four `{x, y}` pairs in clockwise order, representing four corner points of the detected barcode.
     `BarcodeDetectorPolyfill` returns the `boundingBox` corner points.
 
-  Additional properties may be returned by a `BarcodeDetector` polyfill.
+  Additional properties may be returned by `BarcodeDetector` polyfills.
 
 + <a name="bcs-started">`bcs-started`</a>: signals that scanning has started automatically or as requested by 
   [`scanning`](#scanning) and that one (for an image source)
-  or more (for a video source) [`bcs-scanned`](#bcs-scanned) events are to be expected.
+  or several (for a video source) [`bcs-scanned`](#bcs-scanned) events are to be expected.
 
 + <a name="bcs-stopped">`bcs-stopped`</a>: emitted after an image source was scanned once or when repeated scanning of a video source
   stopped because the video stopped playing or as requested by [`scanning`](#scanning).
